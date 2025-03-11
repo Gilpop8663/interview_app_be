@@ -1,0 +1,612 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Address {
+  address_line_1: String!
+  address_line_2: String
+  admin_area_1: String!
+  admin_area_2: String!
+  country_code: String!
+  postal_code: String!
+}
+
+type Amount {
+  currency_code: String!
+  value: String!
+}
+
+type Capture {
+  amount: Amount!
+  create_time: String!
+  disbursement_mode: String!
+  final_capture: Boolean!
+  id: String!
+  links: [Link!]!
+  seller_protection: SellerProtection!
+  seller_receivable_breakdown: SellerReceivableBreakdown!
+  status: String!
+  update_time: String!
+}
+
+input CapturePaypalOrderInput {
+  orderId: String!
+}
+
+type CapturePaypalOrderOutput {
+  error: String
+  ok: Boolean!
+  orderData: PaypalOrderData
+}
+
+input CheckEmailInput {
+  email: String!
+}
+
+type CheckEmailOutput {
+  error: String
+  ok: Boolean!
+}
+
+input CompletePaymentInput {
+  orderId: Float!
+  paymentId: Float!
+  transactionId: String
+}
+
+type CompletePaymentOutput {
+  error: String
+  ok: Boolean!
+}
+
+type CoreOutput {
+  error: String
+  ok: Boolean!
+}
+
+type Coupon {
+  code: String!
+  createdAt: DateTime!
+  expirationDate: DateTime
+  id: Float!
+  isActive: Boolean!
+  updatedAt: DateTime!
+}
+
+input CreateAccountInput {
+  email: String!
+  password: String!
+}
+
+type CreateAccountOutput {
+  error: String
+  ok: Boolean!
+  token: String
+}
+
+input CreateCouponInput {
+  code: String!
+  expirationDate: DateTime
+  isActive: Boolean!
+}
+
+type CreateCouponOutput {
+  error: String
+  ok: Boolean!
+}
+
+input CreateOrderInput {
+  currency: Currency!
+  productId: Float!
+  totalAmount: Float!
+}
+
+type CreateOrderOutput {
+  error: String
+  ok: Boolean!
+  orderId: Float
+}
+
+input CreatePaymentInput {
+  amount: Float!
+  currency: Currency!
+  orderId: Float!
+  transactionId: String
+}
+
+type CreatePaymentOutput {
+  error: String
+  ok: Boolean!
+  paymentId: Float
+}
+
+type CreatePaypalOrderOutput {
+  error: String
+  ok: Boolean!
+  orderData: PaypalOrderData
+  orderId: Float
+}
+
+input CreateProductInput {
+  description: String!
+  name: String!
+  price: Float!
+}
+
+type CreateProductOutput {
+  error: String
+  ok: Boolean!
+  productId: Float
+}
+
+enum Currency {
+  KRW
+  USD
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input DeleteAccountInput {
+  userId: Float!
+}
+
+type DeleteAccountOutput {
+  error: String
+  ok: Boolean!
+}
+
+input DeleteCouponInput {
+  couponId: Float!
+}
+
+type DeleteCouponOutput {
+  error: String
+  ok: Boolean!
+}
+
+input DeleteOrderInput {
+  orderId: Float!
+}
+
+type DeleteOrderOutput {
+  error: String
+  ok: Boolean!
+}
+
+input DeleteProductInput {
+  productId: Float!
+}
+
+type DeleteProductOutput {
+  error: String
+  ok: Boolean!
+}
+
+input EditProductInput {
+  description: String
+  name: String
+  price: Float
+  productId: Float!
+}
+
+type EditProductOutput {
+  error: String
+  ok: Boolean!
+}
+
+input EditProfileInput {
+  nickname: String
+  password: String
+}
+
+type EditProfileOutput {
+  error: String
+  ok: Boolean!
+}
+
+input EditUserSubscriptionTypeInput {
+  subscriptionType: SubscriptionType
+  userId: Float!
+}
+
+type EditUserSubscriptionTypeOutput {
+  error: String
+  ok: Boolean!
+}
+
+input GenerateChatInput {
+  message: String!
+}
+
+type GenerateChatOutput {
+  error: String
+  message: String
+  ok: Boolean!
+}
+
+input GenerateInterviewFeedbackInput {
+  jobTitle: String!
+  preferredLanguage: String!
+  question: String!
+  userAnswer: String!
+  yearsOfExperience: Float!
+}
+
+type GenerateInterviewFeedbackOutput {
+  error: String
+  feedback: String
+  ok: Boolean!
+}
+
+input GenerateInterviewQuestionInput {
+  jobTitle: String!
+  preferredLanguage: String!
+  userId: String!
+  yearsOfExperience: Float!
+}
+
+type GenerateInterviewQuestionOutput {
+  error: String
+  ok: Boolean!
+  question: String
+}
+
+type GetActiveUserCountOutput {
+  count: Float
+  error: String
+  ok: Boolean!
+}
+
+input GetCouponDetailInput {
+  couponId: Float!
+}
+
+type GetCouponDetailOutput {
+  coupon: Coupon
+  error: String
+  ok: Boolean!
+}
+
+type GetCouponListOutput {
+  couponList: [Coupon!]
+  error: String
+  ok: Boolean!
+}
+
+input GetOrderDetailInput {
+  orderId: Float!
+}
+
+type GetOrderDetailOutput {
+  error: String
+  ok: Boolean!
+  order: Order
+}
+
+type GetOrderListOutput {
+  error: String
+  ok: Boolean!
+  orderList: [Order!]
+}
+
+input GetPaymentDetailInput {
+  paymentId: Float!
+}
+
+type GetPaymentDetailOutput {
+  error: String
+  ok: Boolean!
+  payment: Payment
+}
+
+type GetPaymentListOutput {
+  error: String
+  ok: Boolean!
+  paymentList: [Payment!]
+}
+
+input GetProductDetailInput {
+  productId: Float!
+}
+
+type GetProductDetailOutput {
+  error: String
+  ok: Boolean!
+  product: Product
+}
+
+type GetProductListOutput {
+  error: String
+  ok: Boolean!
+  productList: [Product!]
+}
+
+type GetUserCountOutput {
+  count: Float
+  error: String
+  ok: Boolean!
+}
+
+type GetUserListOutput {
+  error: String
+  ok: Boolean!
+  userList: [User!]
+}
+
+type Link {
+  href: String!
+  method: String!
+  rel: String!
+}
+
+input LoginInput {
+  email: String!
+  password: String!
+  rememberMe: Boolean!
+}
+
+type LoginOutput {
+  error: String
+  ok: Boolean!
+  token: String
+}
+
+type Mutation {
+  capturePaypalOrder(input: CapturePaypalOrderInput!): CapturePaypalOrderOutput!
+  checkEmail(input: CheckEmailInput!): CheckEmailOutput!
+  completePayment(input: CompletePaymentInput!): CompletePaymentOutput!
+  createAccount(input: CreateAccountInput!): CreateAccountOutput!
+  createCoupon(input: CreateCouponInput!): CreateCouponOutput!
+  createOrder(input: CreateOrderInput!): CreateOrderOutput!
+  createPayment(input: CreatePaymentInput!): CreatePaymentOutput!
+  createPaypalOrder(input: CreateOrderInput!): CreatePaypalOrderOutput!
+  createProduct(input: CreateProductInput!): CreateProductOutput!
+  deleteAccount(input: DeleteAccountInput!): DeleteAccountOutput!
+  deleteCoupon(input: DeleteCouponInput!): DeleteCouponOutput!
+  deleteOrder(input: DeleteOrderInput!): DeleteOrderOutput!
+  deleteProduct(input: DeleteProductInput!): DeleteProductOutput!
+  editProduct(input: EditProductInput!): EditProductOutput!
+  editProfile(input: EditProfileInput!): EditProfileOutput!
+  editUserSubscriptionType(input: EditUserSubscriptionTypeInput!): EditUserSubscriptionTypeOutput!
+  generateChat(input: GenerateChatInput!): GenerateChatOutput!
+  generateInterviewFeedback(input: GenerateInterviewFeedbackInput!): GenerateInterviewFeedbackOutput!
+  generateInterviewQuestion(input: GenerateInterviewQuestionInput!): GenerateInterviewQuestionOutput!
+  login(input: LoginInput!): LoginOutput!
+  logout: CoreOutput!
+  refreshToken: LoginOutput!
+  updateCoupon(input: UpdateCouponInput!): UpdateCouponOutput!
+  updateOrderStatus(input: UpdateOrderStatusInput!): UpdateOrderStatusOutput!
+  updatePaymentStatus(input: UpdatePaymentStatusInput!): UpdatePaymentStatusOutput!
+  updateSubscriptionType(input: UpdateSubscriptionTypeInput!): UpdateSubscriptionTypeOutput!
+  updateUserPointsAndStatistics(input: UpdateUserPointsAndStatisticsInput!): UpdateUserPointsAndStatisticsOutput!
+  useCoupon(input: UseCouponInput!): UseCouponOutput!
+}
+
+type Name {
+  given_name: String!
+  surname: String!
+}
+
+type Order {
+  createdAt: DateTime!
+  currency: Currency!
+  id: Float!
+  payment: [Payment!]!
+  product: Product!
+  status: OrderStatus!
+  totalAmount: Float!
+  updatedAt: DateTime!
+  user: User!
+}
+
+enum OrderStatus {
+  CANCELLED
+  COMPLETED
+  PENDING
+}
+
+type Payer {
+  email_address: String!
+  name: Name!
+  payer_id: String!
+}
+
+type Payment {
+  amount: Float!
+  createdAt: DateTime!
+  currency: Currency!
+  id: Float!
+  order: Order!
+  status: PaymentStatus!
+  transactionId: String
+  updatedAt: DateTime!
+}
+
+type PaymentSource {
+  paypal: PaypalDetails!
+}
+
+enum PaymentStatus {
+  COMPLETED
+  FAILED
+  PENDING
+}
+
+type Payments {
+  captures: [Capture!]!
+}
+
+type PaypalDetails {
+  account_id: String!
+  email_address: String!
+  name: Name!
+}
+
+type PaypalOrderData {
+  id: String!
+  links: [Link!]!
+  payer: Payer!
+  payment_source: PaymentSource!
+  purchase_units: [PurchaseUnit!]!
+  status: String!
+}
+
+type Product {
+  createdAt: DateTime!
+  description: String!
+  id: Float!
+  name: String!
+  order: [Order!]!
+  price: Float!
+  updatedAt: DateTime!
+}
+
+type PurchaseUnit {
+  payments: Payments!
+  reference_id: String!
+  shipping: Shipping!
+}
+
+type Query {
+  getActiveUserCount: GetActiveUserCountOutput!
+  getCouponDetail(input: GetCouponDetailInput!): GetCouponDetailOutput!
+  getCouponList: GetCouponListOutput!
+  getOrderDetail(input: GetOrderDetailInput!): GetOrderDetailOutput!
+  getOrderList: GetOrderListOutput!
+  getPaymentDetail(input: GetPaymentDetailInput!): GetPaymentDetailOutput!
+  getPaymentList: GetPaymentListOutput!
+  getProductDetail(input: GetProductDetailInput!): GetProductDetailOutput!
+  getProductList: GetProductListOutput!
+  getUserCount: GetUserCountOutput!
+  getUserList: GetUserListOutput!
+  getUserProfile(input: UserProfileInput!): UserProfileOutput!
+  me: User!
+}
+
+type SellerProtection {
+  dispute_categories: [String!]!
+  status: String!
+}
+
+type SellerReceivableBreakdown {
+  gross_amount: Amount!
+  net_amount: Amount!
+  paypal_fee: Amount!
+}
+
+type Shipping {
+  address: Address!
+}
+
+enum SubscriptionType {
+  FREE
+  PREMIUM
+}
+
+enum TaskType {
+  INSTAGRAM_AUTOMATION
+  INSTAGRAM_UNFOLLOW
+  NAVER_AUTOMATION
+  THREADS_UNFOLLOW
+}
+
+input UpdateCouponInput {
+  code: String!
+  couponId: Float!
+  expirationDate: DateTime
+  isActive: Boolean!
+}
+
+type UpdateCouponOutput {
+  error: String
+  ok: Boolean!
+}
+
+input UpdateOrderStatusInput {
+  orderId: Float!
+  status: OrderStatus!
+}
+
+type UpdateOrderStatusOutput {
+  error: String
+  ok: Boolean!
+  order: Order
+}
+
+input UpdatePaymentStatusInput {
+  paymentId: Float!
+  status: PaymentStatus!
+  transactionId: String
+}
+
+type UpdatePaymentStatusOutput {
+  error: String
+  ok: Boolean!
+}
+
+input UpdateSubscriptionTypeInput {
+  subscriptionPeriod: String!
+  subscriptionType: SubscriptionType!
+}
+
+type UpdateSubscriptionTypeOutput {
+  error: String
+  ok: Boolean!
+}
+
+input UpdateUserPointsAndStatisticsInput {
+  pointsToDeduct: Float!
+  taskType: TaskType!
+}
+
+type UpdateUserPointsAndStatisticsOutput {
+  error: String
+  ok: Boolean!
+}
+
+input UseCouponInput {
+  code: String!
+}
+
+type UseCouponOutput {
+  error: String
+  ok: Boolean!
+}
+
+type User {
+  createdAt: DateTime!
+  email: String!
+  id: Float!
+  instagramAutomationCount: Float!
+  instagramUnfollowCount: Float!
+  naverAutomationCount: Float!
+  nickname: String!
+  order: [Order!]!
+  password: String!
+  point: Float!
+  premiumEndDate: DateTime
+  premiumStartDate: DateTime
+  role: UserRole!
+  subscriptionType: SubscriptionType!
+  threadsUnfollowCount: Float!
+  updatedAt: DateTime!
+  usedCoupons: [String!]
+}
+
+input UserProfileInput {
+  userId: Float!
+}
+
+type UserProfileOutput {
+  error: String
+  ok: Boolean!
+  user: User
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
