@@ -36,7 +36,10 @@ import {
 import { PaypalService } from './orders/paypal.service';
 import { CouponModule } from './coupon/coupon.module';
 import { Coupon } from './coupon/entities/coupon.entity';
+import { InterviewsModule } from './interviews/interviews.module';
+import { AudioModule } from './audio/audio.module';
 import * as fs from 'fs';
+import { Audio } from './audio/entities/audio.entity';
 
 const getEnvFilePath = () => {
   if (process.env.NODE_ENV === 'dev') {
@@ -102,7 +105,7 @@ const getEnvFilePath = () => {
             password: process.env.DB_PASSWORD,
             database: process.env.DB_DATABASE_NAME,
           }),
-      entities: [User, Product, Order, Payment, Coupon],
+      entities: [User, Product, Order, Payment, Coupon, Audio],
       logging: process.env.NODE_ENV === 'dev',
       synchronize: true,
       ssl:
@@ -151,6 +154,8 @@ const getEnvFilePath = () => {
     PaymentsModule,
     OpenAiModule,
     CouponModule,
+    InterviewsModule,
+    AudioModule,
   ],
   controllers: [],
   providers: [OpenAiService, PaypalService],

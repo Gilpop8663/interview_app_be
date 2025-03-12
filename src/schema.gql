@@ -382,6 +382,7 @@ type Mutation {
   updatePaymentStatus(input: UpdatePaymentStatusInput!): UpdatePaymentStatusOutput!
   updateSubscriptionType(input: UpdateSubscriptionTypeInput!): UpdateSubscriptionTypeOutput!
   updateUserPointsAndStatistics(input: UpdateUserPointsAndStatisticsInput!): UpdateUserPointsAndStatisticsOutput!
+  uploadSpeechFile(input: UploadSpeechFileInput!): UploadSpeechFileOutput!
   useCoupon(input: UseCouponInput!): UseCouponOutput!
 }
 
@@ -564,6 +565,16 @@ input UpdateUserPointsAndStatisticsInput {
 
 type UpdateUserPointsAndStatisticsOutput {
   error: String
+  ok: Boolean!
+}
+
+input UploadSpeechFileInput {
+  file: String!
+}
+
+type UploadSpeechFileOutput {
+  error: String
+  feedback: String
   ok: Boolean!
 }
 
