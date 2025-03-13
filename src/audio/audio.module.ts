@@ -7,5 +7,6 @@ import { Audio } from './entities/audio.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Audio])],
   providers: [AudioService, AudioResolver],
+  exports: [AudioService],
 })
 export class AudioModule {}

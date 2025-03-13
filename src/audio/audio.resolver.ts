@@ -11,11 +11,6 @@ export class AudioResolver {
 
   @Mutation(() => UploadSpeechFileOutput)
   async uploadSpeechFile(@Args('input') input: UploadSpeechFileInput) {
-    await this.audioService.saveFile(input);
-
-    return {
-      ok: true,
-      feedback: '파일이 성공적으로 업로드되었습니다.',
-    };
+    return await this.audioService.saveFile(input);
   }
 }

@@ -9,6 +9,9 @@ export class UploadSpeechFileInput {
 
 @ObjectType()
 export class UploadSpeechFileOutput extends CoreOutput {
-  @Field(() => String, { nullable: true })
-  feedback: string;
+  @Field(() => Number)
+  audioId: number;
+
+  @Field(() => String)
+  answer: string;
 }

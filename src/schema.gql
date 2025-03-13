@@ -228,11 +228,8 @@ type GenerateChatOutput {
 }
 
 input GenerateInterviewFeedbackInput {
-  jobTitle: String!
-  preferredLanguage: String!
   question: String!
   userAnswer: String!
-  yearsOfExperience: Float!
 }
 
 type GenerateInterviewFeedbackOutput {
@@ -336,6 +333,11 @@ type GetUserListOutput {
   userList: [User!]
 }
 
+type InterviewQuestion {
+  id: Float!
+  question: String!
+}
+
 type Link {
   href: String!
   method: String!
@@ -376,6 +378,7 @@ type Mutation {
   generateInterviewQuestion(input: GenerateInterviewQuestionInput!): GenerateInterviewQuestionOutput!
   login(input: LoginInput!): LoginOutput!
   logout: CoreOutput!
+  processInterviewAudio(input: ProcessInterviewAudioInput!): ProcessInterviewAudioOutput!
   refreshToken: LoginOutput!
   updateCoupon(input: UpdateCouponInput!): UpdateCouponOutput!
   updateOrderStatus(input: UpdateOrderStatusInput!): UpdateOrderStatusOutput!
@@ -455,6 +458,17 @@ type PaypalOrderData {
   status: String!
 }
 
+input ProcessInterviewAudioInput {
+  file: String!
+  question: String!
+}
+
+type ProcessInterviewAudioOutput {
+  error: String
+  feedback: String
+  ok: Boolean!
+}
+
 type Product {
   createdAt: DateTime!
   description: String!
@@ -475,6 +489,7 @@ type Query {
   getActiveUserCount: GetActiveUserCountOutput!
   getCouponDetail(input: GetCouponDetailInput!): GetCouponDetailOutput!
   getCouponList: GetCouponListOutput!
+  getInterviewQuestions: [InterviewQuestion!]!
   getOrderDetail(input: GetOrderDetailInput!): GetOrderDetailOutput!
   getOrderList: GetOrderListOutput!
   getPaymentDetail(input: GetPaymentDetailInput!): GetPaymentDetailOutput!
@@ -573,8 +588,9 @@ input UploadSpeechFileInput {
 }
 
 type UploadSpeechFileOutput {
+  answer: String!
+  audioId: Float!
   error: String
-  feedback: String
   ok: Boolean!
 }
 

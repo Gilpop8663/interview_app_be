@@ -81,7 +81,7 @@ export class AudioService {
 
     await this.audioRepository.save(audio);
 
-    return { ok: true, feedback: '업로드 성공' };
+    return { ok: true, audioId: audio.id, answer: audio.transcribedText };
   }
 
   private async transcribeAudio(audioPath: string): Promise<string> {

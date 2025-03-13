@@ -132,13 +132,10 @@ export class OpenAiService {
 
   async generateInterviewFeedback({
     userAnswer,
-    jobTitle,
-    yearsOfExperience,
-    preferredLanguage,
     question,
   }: GenerateInterviewFeedbackInput): Promise<GenerateInterviewFeedbackOutput> {
     try {
-      const prompt = `Provide detailed feedback on this interview answer: "${userAnswer}". The answer is for a ${jobTitle} with ${yearsOfExperience} years of experience. The interview question was: "${question}". Please respond in ${preferredLanguage}. Consider the job title, years of experience, and preferred language in your feedback.`;
+      const prompt = `다음 면접 질문에 대한 답변을 상세히 피드백해 주세요: "${userAnswer}". 이 답변은 프론트엔드 개발자가 한 것입니다. 면접 질문은: "${question}"입니다. 프론트엔드 개발자의 직무에 맞게 피드백을 제공해 주세요. 피드백은 한국어로 작성해 주세요.`;
 
       // Gemini 모델로 피드백을 생성
       const model = this.genAI.getGenerativeModel({
@@ -162,9 +159,6 @@ export class OpenAiService {
       // Gemini에서 실패 시 fallback
       return this.generateInterviewFeedbackFromOpenAI({
         userAnswer,
-        jobTitle,
-        yearsOfExperience,
-        preferredLanguage,
         question,
       });
     }
@@ -172,13 +166,10 @@ export class OpenAiService {
 
   async generateInterviewFeedbackFromOpenAI({
     userAnswer,
-    jobTitle,
-    yearsOfExperience,
-    preferredLanguage,
     question,
   }: GenerateInterviewFeedbackInput): Promise<GenerateInterviewFeedbackOutput> {
     try {
-      const prompt = `Provide detailed feedback on this interview answer: "${userAnswer}". The answer is for a ${jobTitle} with ${yearsOfExperience} years of experience. The interview question was: "${question}". Please respond in ${preferredLanguage}. Consider the job title, years of experience, and preferred language in your feedback.`;
+      const prompt = `다음 면접 질문에 대한 답변을 상세히 피드백해 주세요: "${userAnswer}". 이 답변은 프론트엔드 개발자가 한 것입니다. 면접 질문은: "${question}"입니다. 프론트엔드 개발자의 직무에 맞게 피드백을 제공해 주세요. 피드백은 한국어로 작성해 주세요.`;
 
       // OpenAI GPT 모델로 피드백을 생성
       const result = await this.openAi.chat.completions.create({
