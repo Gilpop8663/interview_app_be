@@ -12,6 +12,12 @@ export class ProcessInterviewAudioInput {
 
 @ObjectType()
 export class ProcessInterviewAudioOutput extends CoreOutput {
-  @Field(() => String, { nullable: true })
-  feedback?: string; // 생성된 피드백
+  @Field(() => String)
+  feedback: string;
+
+  @Field(() => String)
+  habits: string;
+
+  @Field(() => String)
+  speed: string;
 }
