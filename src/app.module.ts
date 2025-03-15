@@ -40,6 +40,8 @@ import { InterviewsModule } from './interviews/interviews.module';
 import { AudioModule } from './audio/audio.module';
 import * as fs from 'fs';
 import { Audio } from './audio/entities/audio.entity';
+import { PasswordResetToken } from './users/entities/passwordResetToken.entity';
+import { Verification } from './users/entities/verification.entity';
 
 const getEnvFilePath = () => {
   if (process.env.NODE_ENV === 'dev') {
@@ -105,7 +107,16 @@ const getEnvFilePath = () => {
             password: process.env.DB_PASSWORD,
             database: process.env.DB_DATABASE_NAME,
           }),
-      entities: [User, Product, Order, Payment, Coupon, Audio],
+      entities: [
+        User,
+        Product,
+        Order,
+        Payment,
+        Coupon,
+        Audio,
+        Verification,
+        PasswordResetToken,
+      ],
       logging: process.env.NODE_ENV === 'dev',
       synchronize: true,
       ssl:

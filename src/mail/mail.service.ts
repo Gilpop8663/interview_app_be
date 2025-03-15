@@ -22,7 +22,15 @@ export class MailService {
     });
   }
 
-  async sendGmail(to: string, subject: string, text: string) {
+  async sendGmail({
+    to,
+    subject,
+    text,
+  }: {
+    to: string;
+    subject: string;
+    text: string;
+  }) {
     try {
       const info = await this.transporter.sendMail({
         from: `"Interview App" <${this.options.user}>`, // 보내는 사람
@@ -83,11 +91,10 @@ export class MailService {
   }
 
   sendVerificationEmail({ email, code }: { email: string; code: string }) {
-    this.sendEmail({
+    this.sendGmail({
       to: email,
-      template: 'verify-email',
-      subject: '[체험단플래너] 이메일 인증이 도착했습니다.',
-      emailVars: [{ key: 'code', value: code }],
+      subject: '[인터뷰 앱] 이메일 인증이 도착했습니다.',
+      text: `인증번호가 도착했습니다. \n 인증번호: ${code}`,
     });
   }
 
@@ -100,14 +107,10 @@ export class MailService {
     nickname: string;
     code: string;
   }) {
-    this.sendEmail({
+    this.sendGmail({
       to: email,
-      template: 'reset-password',
-      subject: '[체험단플래너] 비밀번호 재설정 링크가 도착했습니다.',
-      emailVars: [
-        { key: 'code', value: code },
-        { key: 'nickname', value: nickname },
-      ],
+      subject: '[인터뷰 앱] 비밀번호 재설정 링크가 도착했습니다.',
+      text: `${nickname}님의 비밀번호 재설정 링크가 도착했습니다.\n 인증번호: ${code}`,
     });
   }
 }

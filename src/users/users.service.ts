@@ -1,6 +1,6 @@
 import { Injectable, Res } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { MoreThan, Repository } from 'typeorm';
 import {
   SubscriptionType,
   TaskType,
@@ -12,7 +12,7 @@ import { LoginInput } from './dtos/login.dto';
 import { JwtService } from 'src/jwt/jwt.service';
 import { EditProfileInput, EditProfileOutput } from './dtos/edit-profile.dto';
 import { UserProfileInput, UserProfileOutput } from './dtos/user-profile.dto';
-import { getRandomNickname, logErrorAndThrow } from 'src/utils';
+import { logErrorAndThrow } from 'src/utils';
 import {
   DeleteAccountInput,
   DeleteAccountOutput,
@@ -38,17 +38,42 @@ import {
   EditUserSubscriptionTypeInput,
   EditUserSubscriptionTypeOutput,
 } from './dtos/edit-user-subscription-type.dto';
+import { Verification } from './entities/verification.entity';
+import {
+  SendVerifyEmailInput,
+  SendVerifyEmailOutput,
+} from './dtos/send-verify-email.dto';
+import { MailService } from 'src/mail/mail.service';
+import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto';
+import {
+  CheckNicknameInput,
+  CheckNicknameOutput,
+} from './dtos/check-nickname.dto';
+import {
+  ResetPasswordInput,
+  ResetPasswordOutput,
+} from './dtos/reset-password.dto';
+import {
+  ForgotPasswordInput,
+  ForgotPasswordOutput,
+} from './dtos/forgot-password.dto';
+import { PasswordResetToken } from './entities/passwordResetToken.entity';
 
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User) private readonly users: Repository<User>,
+    @InjectRepository(Verification)
+    private readonly verifications: Repository<Verification>,
+    @InjectRepository(PasswordResetToken)
+    private readonly passwordResetToken: Repository<PasswordResetToken>,
     private readonly jwtService: JwtService,
     private readonly i18n: I18nService,
+    private readonly mailService: MailService,
   ) {}
 
   async createAccount(
-    { email, password }: CreateAccountInput,
+    { email, password, nickname }: CreateAccountInput,
     @Res() res: Response,
     cookieDomain: string,
   ): Promise<{
@@ -56,19 +81,22 @@ export class UsersService {
     error?: string;
   }> {
     try {
-      const lang = I18nContext.current().lang;
-      const nickname = getRandomNickname(lang);
-
+      const existNickname = await this.users.findOne({ where: { nickname } });
       const existEmail = await this.users.findOne({ where: { email } });
+      const verification = await this.verifications.findOne({
+        where: { email },
+      });
+
+      if (existNickname) {
+        return { ok: false, error: '이미 존재하는 닉네임입니다.' };
+      }
 
       if (existEmail) {
-        const result = await this.login(
-          { email, password, rememberMe: true },
-          res,
-          cookieDomain,
-        );
+        return { ok: false, error: '이미 존재하는 이메일입니다.' };
+      }
 
-        return result;
+      if (!verification.verified) {
+        return { ok: false, error: '이메일 인증을 받아주세요.' };
       }
 
       const newUser = this.users.create({
@@ -137,41 +165,27 @@ export class UsersService {
       });
 
       if (!user) {
-        const user_id_not_found = this.i18n.t('error.user_id_not_found', {
-          lang: I18nContext.current().lang,
-        });
-
         return {
           ok: false,
-          error: user_id_not_found,
+          error: '입력한 아이디가 존재하지 않습니다.',
         };
       }
 
       const isPasswordCorrect = await user.checkPassword(password);
       if (!isPasswordCorrect) {
-        const incorrect_password = this.i18n.t('error.incorrect_password', {
-          lang: I18nContext.current().lang,
-        });
-
-        console.log(incorrect_password, I18nContext.current().lang);
-
         return {
           ok: false,
-          error: incorrect_password,
+          error: '비밀번호가 맞지 않습니다.',
         };
       }
 
       await this.updateLastActive(user.id);
       await this.rewardLoginPoints(user.id);
 
-      const accessTokenExpiry = cookieDomain.includes('chrome-extension')
-        ? '100y'
-        : '1h';
-
-      // 액세스 토큰 생성 (1시간 만료), 크롬 익스텐션의 경우 무기한.
+      // 액세스 토큰 생성 (1시간 만료)
       const accessToken = this.jwtService.sign(
         { id: user.id },
-        { expiresIn: accessTokenExpiry },
+        { expiresIn: '1h' },
       );
 
       // rememberMe에 따른 리프레시 토큰 만료 시간 설정
@@ -187,7 +201,7 @@ export class UsersService {
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none',
+        sameSite: 'lax',
         maxAge: rememberMe ? 7 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000, // rememberMe에 따른 만료 시간 설정
         domain: cookieDomain,
       });
@@ -197,11 +211,7 @@ export class UsersService {
         token: accessToken,
       };
     } catch (error) {
-      const login_failed = this.i18n.t('error.login_failed', {
-        lang: I18nContext.current().lang,
-      });
-
-      return { ok: false, error: login_failed };
+      return { ok: false, error: '로그인에 실패했습니다.' };
     }
   }
 
@@ -271,6 +281,149 @@ export class UsersService {
       });
 
       return { ok: false, error: invalid_refresh_token };
+    }
+  }
+
+  async sendVerifyEmail({
+    email,
+  }: SendVerifyEmailInput): Promise<SendVerifyEmailOutput> {
+    try {
+      const user = await this.users.findOne({ where: { email } });
+
+      if (user) {
+        return {
+          ok: false,
+          error: '이미 해당 이메일로 가입된 계정이 있습니다.',
+        };
+      }
+
+      const existVerification = await this.verifications.findOne({
+        where: { email },
+      });
+
+      if (existVerification) {
+        await this.verifications.delete(existVerification.id);
+      }
+
+      const verification = this.verifications.create({ email });
+
+      await this.verifications.save(verification);
+
+      this.mailService.sendVerificationEmail({
+        email: email,
+        code: verification.code,
+      });
+
+      return { ok: true };
+    } catch (error) {
+      return {
+        ok: false,
+        error: '이메일 인증 메일 보내기에 실패했습니다.',
+      };
+    }
+  }
+
+  async verifyEmail({
+    code,
+    email,
+  }: VerifyEmailInput): Promise<VerifyEmailOutput> {
+    try {
+      const verification = await this.verifications.findOne({
+        where: { email },
+      });
+
+      if (verification.code === code) {
+        await this.verifications.update(verification.id, { verified: true });
+
+        return { ok: true };
+      }
+
+      return { ok: false, error: '이메일 검증에 실패했습니다.' };
+    } catch (error) {
+      return { ok: false, error };
+    }
+  }
+
+  async checkNickname({
+    nickname,
+  }: CheckNicknameInput): Promise<CheckNicknameOutput> {
+    try {
+      // 닉네임 유효성 검사: 영문, 한글, 숫자만 허용하며, 길이는 2~64자
+      const nicknameRegex = /^[a-zA-Z0-9가-힣]{2,64}$/;
+
+      if (!nicknameRegex.test(nickname)) {
+        return {
+          ok: false,
+          error:
+            '닉네임은 영문, 한글, 숫자로 구성된 2자리 이상 64자리 이하여야 합니다.',
+        };
+      }
+
+      const user = await this.users.findOne({ where: { nickname } });
+
+      if (user) {
+        return { ok: false, error: '이미 사용 중인 닉네임입니다.' };
+      }
+
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error: '닉네임 중복 확인에 실패했습니다.' };
+    }
+  }
+
+  async forgotPassword({
+    email,
+  }: ForgotPasswordInput): Promise<ForgotPasswordOutput> {
+    try {
+      const user = await this.users.findOne({ where: { email } });
+
+      if (!user) {
+        return { ok: false, error: '유저가 존재하지 않습니다.' };
+      }
+
+      const token = this.passwordResetToken.create({ user });
+
+      await this.passwordResetToken.save(token);
+
+      this.mailService.sendResetPasswordEmail({
+        email: user.email,
+        nickname: user.nickname,
+        code: token.code,
+      });
+
+      return { ok: true };
+    } catch (error) {
+      return {
+        ok: false,
+        error: '비밀번호 재설정 이메일 전송에 실패했습니다.',
+      };
+    }
+  }
+
+  async resetPassword({
+    newPassword,
+    code,
+  }: ResetPasswordInput): Promise<ResetPasswordOutput> {
+    try {
+      const token = await this.passwordResetToken.findOne({
+        where: { code, expiresAt: MoreThan(new Date()) },
+        relations: ['user'],
+      });
+
+      if (!token) {
+        return { ok: false, error: '토큰이 존재하지 않습니다.' };
+      }
+
+      const user = token.user;
+
+      user.password = newPassword;
+
+      await this.users.save(user);
+      await this.passwordResetToken.delete(token.id);
+
+      return { ok: true };
+    } catch (error) {
+      return { ok: false, error: '비밀번호 재설정에 실패했습니다.' };
     }
   }
 

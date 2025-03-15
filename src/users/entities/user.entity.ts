@@ -14,6 +14,7 @@ import { IsEmail, IsNumber, Length } from 'class-validator';
 
 import { registerEnumType } from '@nestjs/graphql';
 import { Order } from 'src/orders/entities/order.entity';
+import { PasswordResetToken } from './passwordResetToken.entity';
 
 export enum UserRole {
   USER = 'user',
@@ -107,6 +108,9 @@ export class User extends CoreEntity {
   @Column('simple-array', { nullable: true })
   @Field(() => [String], { nullable: true }) // GraphQL에서 배열로 반환
   usedCoupons: string[]; // 사용한 쿠폰 코드 목록
+
+  @OneToMany(() => PasswordResetToken, (token) => token.user)
+  passwordResetTokens: PasswordResetToken[];
 
   @BeforeInsert()
   @BeforeUpdate()

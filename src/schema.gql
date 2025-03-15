@@ -48,6 +48,15 @@ type CheckEmailOutput {
   ok: Boolean!
 }
 
+input CheckNicknameInput {
+  nickname: String!
+}
+
+type CheckNicknameOutput {
+  error: String
+  ok: Boolean!
+}
+
 input CompletePaymentInput {
   orderId: Float!
   paymentId: Float!
@@ -75,6 +84,7 @@ type Coupon {
 
 input CreateAccountInput {
   email: String!
+  nickname: String!
   password: String!
 }
 
@@ -213,6 +223,15 @@ input EditUserSubscriptionTypeInput {
 }
 
 type EditUserSubscriptionTypeOutput {
+  error: String
+  ok: Boolean!
+}
+
+input ForgotPasswordInput {
+  email: String!
+}
+
+type ForgotPasswordOutput {
   error: String
   ok: Boolean!
 }
@@ -359,6 +378,7 @@ type LoginOutput {
 type Mutation {
   capturePaypalOrder(input: CapturePaypalOrderInput!): CapturePaypalOrderOutput!
   checkEmail(input: CheckEmailInput!): CheckEmailOutput!
+  checkNickname(input: CheckNicknameInput!): CheckNicknameOutput!
   completePayment(input: CompletePaymentInput!): CompletePaymentOutput!
   createAccount(input: CreateAccountInput!): CreateAccountOutput!
   createCoupon(input: CreateCouponInput!): CreateCouponOutput!
@@ -373,6 +393,7 @@ type Mutation {
   editProduct(input: EditProductInput!): EditProductOutput!
   editProfile(input: EditProfileInput!): EditProfileOutput!
   editUserSubscriptionType(input: EditUserSubscriptionTypeInput!): EditUserSubscriptionTypeOutput!
+  forgotPassword(input: ForgotPasswordInput!): ForgotPasswordOutput!
   generateChat(input: GenerateChatInput!): GenerateChatOutput!
   generateInterviewFeedback(input: GenerateInterviewFeedbackInput!): GenerateInterviewFeedbackOutput!
   generateInterviewQuestion(input: GenerateInterviewQuestionInput!): GenerateInterviewQuestionOutput!
@@ -380,6 +401,8 @@ type Mutation {
   logout: CoreOutput!
   processInterviewAudio(input: ProcessInterviewAudioInput!): ProcessInterviewAudioOutput!
   refreshToken: LoginOutput!
+  resetPassword(input: ResetPasswordInput!): ResetPasswordOutput!
+  sendVerifyEmail(input: SendVerifyEmailInput!): SendVerifyEmailOutput!
   updateCoupon(input: UpdateCouponInput!): UpdateCouponOutput!
   updateOrderStatus(input: UpdateOrderStatusInput!): UpdateOrderStatusOutput!
   updatePaymentStatus(input: UpdatePaymentStatusInput!): UpdatePaymentStatusOutput!
@@ -387,6 +410,7 @@ type Mutation {
   updateUserPointsAndStatistics(input: UpdateUserPointsAndStatisticsInput!): UpdateUserPointsAndStatisticsOutput!
   uploadSpeechFile(input: UploadSpeechFileInput!): UploadSpeechFileOutput!
   useCoupon(input: UseCouponInput!): UseCouponOutput!
+  verifyEmail(input: VerifyEmailInput!): VerifyEmailOutput!
 }
 
 type Name {
@@ -504,6 +528,16 @@ type Query {
   me: User!
 }
 
+input ResetPasswordInput {
+  code: String!
+  newPassword: String!
+}
+
+type ResetPasswordOutput {
+  error: String
+  ok: Boolean!
+}
+
 type SellerProtection {
   dispute_categories: [String!]!
   status: String!
@@ -513,6 +547,15 @@ type SellerReceivableBreakdown {
   gross_amount: Amount!
   net_amount: Amount!
   paypal_fee: Amount!
+}
+
+input SendVerifyEmailInput {
+  email: String!
+}
+
+type SendVerifyEmailOutput {
+  error: String
+  ok: Boolean!
 }
 
 type Shipping {
@@ -525,10 +568,7 @@ enum SubscriptionType {
 }
 
 enum TaskType {
-  INSTAGRAM_AUTOMATION
-  INSTAGRAM_UNFOLLOW
-  NAVER_AUTOMATION
-  THREADS_UNFOLLOW
+  ANSWER_SUBMITTED
 }
 
 input UpdateCouponInput {
@@ -608,12 +648,10 @@ type UseCouponOutput {
 }
 
 type User {
+  answerSubmittedCount: Float!
   createdAt: DateTime!
   email: String!
   id: Float!
-  instagramAutomationCount: Float!
-  instagramUnfollowCount: Float!
-  naverAutomationCount: Float!
   nickname: String!
   order: [Order!]!
   password: String!
@@ -622,7 +660,6 @@ type User {
   premiumStartDate: DateTime
   role: UserRole!
   subscriptionType: SubscriptionType!
-  threadsUnfollowCount: Float!
   updatedAt: DateTime!
   usedCoupons: [String!]
 }
@@ -640,4 +677,14 @@ type UserProfileOutput {
 enum UserRole {
   ADMIN
   USER
+}
+
+input VerifyEmailInput {
+  code: String!
+  email: String!
+}
+
+type VerifyEmailOutput {
+  error: String
+  ok: Boolean!
 }

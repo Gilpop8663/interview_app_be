@@ -36,6 +36,23 @@ import {
   EditUserSubscriptionTypeInput,
   EditUserSubscriptionTypeOutput,
 } from './dtos/edit-user-subscription-type.dto';
+import {
+  SendVerifyEmailInput,
+  SendVerifyEmailOutput,
+} from './dtos/send-verify-email.dto';
+import { VerifyEmailInput, VerifyEmailOutput } from './dtos/verify-email.dto';
+import {
+  CheckNicknameInput,
+  CheckNicknameOutput,
+} from './dtos/check-nickname.dto';
+import {
+  ForgotPasswordInput,
+  ForgotPasswordOutput,
+} from './dtos/forgot-password.dto';
+import {
+  ResetPasswordInput,
+  ResetPasswordOutput,
+} from './dtos/reset-password.dto';
 
 @Resolver()
 export class UsersResolver {
@@ -71,6 +88,31 @@ export class UsersResolver {
   @UseGuards(AuthGuard)
   me(@AuthUser() user: User) {
     return user;
+  }
+
+  @Mutation(() => SendVerifyEmailOutput)
+  sendVerifyEmail(@Args('input') { email }: SendVerifyEmailInput) {
+    return this.usersService.sendVerifyEmail({ email });
+  }
+
+  @Mutation(() => VerifyEmailOutput)
+  verifyEmail(@Args('input') input: VerifyEmailInput) {
+    return this.usersService.verifyEmail(input);
+  }
+
+  @Mutation(() => CheckNicknameOutput)
+  checkNickname(@Args('input') input: CheckNicknameInput) {
+    return this.usersService.checkNickname(input);
+  }
+
+  @Mutation(() => ForgotPasswordOutput)
+  forgotPassword(@Args('input') input: ForgotPasswordInput) {
+    return this.usersService.forgotPassword(input);
+  }
+
+  @Mutation(() => ResetPasswordOutput)
+  resetPassword(@Args('input') input: ResetPasswordInput) {
+    return this.usersService.resetPassword(input);
   }
 
   @Query(() => UserProfileOutput)
