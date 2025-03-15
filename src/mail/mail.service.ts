@@ -4,12 +4,40 @@ import { CONFIG_OPTIONS } from 'src/common/common.constants';
 import { EmailVar, MailModuleOptions, MailTemplate } from './mail.interfaces';
 import fetch from 'node-fetch';
 import { logErrorAndThrow } from 'src/utils';
+import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class MailService {
+  private transporter;
+
   constructor(
     @Inject(CONFIG_OPTIONS) private readonly options: MailModuleOptions,
-  ) {}
+  ) {
+    this.transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: this.options.user,
+        pass: this.options.pass,
+      },
+    });
+  }
+
+  async sendGmail(to: string, subject: string, text: string) {
+    try {
+      const info = await this.transporter.sendMail({
+        from: `"Interview App" <${this.options.user}>`, // 보내는 사람
+        to, // 받는 사람
+        subject, // 제목
+        text, // 내용 (HTML 형식도 가능)
+      });
+
+      console.log('Email sent:', info.messageId);
+      return { success: true, messageId: info.messageId };
+    } catch (error) {
+      console.error('Error sending email:', error);
+      return { success: false, error };
+    }
+  }
 
   async sendEmail({
     to,

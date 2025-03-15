@@ -19,5 +19,7 @@ declare module NodeJS {
     PAYPAL_CLIENT_ID: string;
     PAYPAL_CLIENT_SECRET: string;
     GEMINI_API_KEY: string;
+    GMAIL_USER: string;
+    GMAIL_PASS: string;
   }
 }

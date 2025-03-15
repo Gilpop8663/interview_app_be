@@ -145,6 +145,8 @@ const getEnvFilePath = () => {
     }),
     AuthModule,
     MailModule.forRoot({
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_PASS,
       apiKey: process.env.MAILGUN_API_KEY,
       domain: process.env.MAILGUN_DOMAIN_NAME,
     }),

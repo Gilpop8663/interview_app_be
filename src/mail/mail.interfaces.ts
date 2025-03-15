@@ -1,4 +1,6 @@
 export interface MailModuleOptions {
+  user: string;
+  pass: string;
   apiKey: string;
   domain: string;
 }
