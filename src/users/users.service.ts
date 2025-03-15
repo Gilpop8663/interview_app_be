@@ -529,29 +529,8 @@ export class UsersService {
       }
 
       // 각 플랫폼별 통계 업데이트
-      if (taskType === TaskType.THREADS_UNFOLLOW) {
-        await this.updateThreadStatistics({
-          userId,
-          count: pointsToDeduct,
-        });
-      }
-
-      if (taskType === TaskType.INSTAGRAM_UNFOLLOW) {
-        await this.updateInstagramStatistics({
-          userId,
-          count: pointsToDeduct,
-        });
-      }
-
-      if (taskType === TaskType.INSTAGRAM_AUTOMATION) {
-        await this.updateInstagramAutomationStatistics({
-          userId,
-          count: pointsToDeduct,
-        });
-      }
-
-      if (taskType === TaskType.NAVER_AUTOMATION) {
-        await this.updateNaverAutomationStatistics({
+      if (taskType === TaskType.ANSWER_SUBMITTED) {
+        await this.updateSubmitStatistics({
           userId,
           count: pointsToDeduct,
         });
@@ -596,7 +575,7 @@ export class UsersService {
     }
   }
 
-  async updateThreadStatistics({
+  async updateSubmitStatistics({
     count,
     userId,
   }: UpdateStatisticsInput): Promise<UpdateStatisticsOutput> {
@@ -604,7 +583,7 @@ export class UsersService {
       const currentUser = await this.users.findOne({ where: { id: userId } });
 
       await this.users.update(userId, {
-        threadsUnfollowCount: currentUser.threadsUnfollowCount + count,
+        answerSubmittedCount: currentUser.answerSubmittedCount + count,
       });
 
       return { ok: true };
@@ -617,78 +596,6 @@ export class UsersService {
       );
 
       throw new Error(thread_unfollow_count_update_failed);
-    }
-  }
-
-  async updateInstagramStatistics({
-    count,
-    userId,
-  }: UpdateStatisticsInput): Promise<UpdateStatisticsOutput> {
-    try {
-      const currentUser = await this.users.findOne({ where: { id: userId } });
-
-      await this.users.update(userId, {
-        instagramUnfollowCount: currentUser.instagramUnfollowCount + count,
-      });
-
-      return { ok: true };
-    } catch (error) {
-      const instagram_automation_update_failed = this.i18n.t(
-        'error.instagram_automation_update_failed',
-        {
-          lang: I18nContext.current().lang,
-        },
-      );
-
-      throw new Error(instagram_automation_update_failed);
-    }
-  }
-
-  async updateInstagramAutomationStatistics({
-    count,
-    userId,
-  }: UpdateStatisticsInput): Promise<UpdateStatisticsOutput> {
-    try {
-      const currentUser = await this.users.findOne({ where: { id: userId } });
-
-      await this.users.update(userId, {
-        instagramAutomationCount: currentUser.instagramAutomationCount + count,
-      });
-
-      return { ok: true };
-    } catch (error) {
-      const instagram_automation_update_failed = this.i18n.t(
-        'error.instagram_automation_update_failed',
-        {
-          lang: I18nContext.current().lang,
-        },
-      );
-
-      throw new Error(instagram_automation_update_failed);
-    }
-  }
-
-  async updateNaverAutomationStatistics({
-    count,
-    userId,
-  }: UpdateStatisticsInput): Promise<UpdateStatisticsOutput> {
-    try {
-      const currentUser = await this.users.findOne({ where: { id: userId } });
-
-      await this.users.update(userId, {
-        naverAutomationCount: currentUser.naverAutomationCount + count,
-      });
-
-      return { ok: true };
-    } catch (error) {
-      const naver_automation_update_failed = this.i18n.t(
-        'error.naver_automation_update_failed',
-        {
-          lang: I18nContext.current().lang,
-        },
-      );
-
-      throw new Error(naver_automation_update_failed);
     }
   }
 

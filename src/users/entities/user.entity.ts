@@ -26,10 +26,7 @@ export enum SubscriptionType {
 }
 
 export enum TaskType {
-  THREADS_UNFOLLOW = 'threadsUnfollow',
-  INSTAGRAM_UNFOLLOW = 'instagramUnfollow',
-  INSTAGRAM_AUTOMATION = 'instagramAutomation',
-  NAVER_AUTOMATION = 'naverAutomation',
+  ANSWER_SUBMITTED = 'answerSubmitted',
 }
 
 registerEnumType(UserRole, {
@@ -97,19 +94,7 @@ export class User extends CoreEntity {
 
   @Column({ default: 0 })
   @Field(() => Number)
-  threadsUnfollowCount: number;
-
-  @Column({ default: 0 })
-  @Field(() => Number)
-  instagramUnfollowCount: number;
-
-  @Column({ default: 0 })
-  @Field(() => Number)
-  instagramAutomationCount: number;
-
-  @Column({ default: 0 })
-  @Field(() => Number)
-  naverAutomationCount: number;
+  answerSubmittedCount: number;
 
   @Column({ type: 'timestamp', nullable: true })
   @Field(() => Date, { nullable: true })

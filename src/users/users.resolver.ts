@@ -27,10 +27,6 @@ import {
   UpdateSubscriptionTypeOutput,
 } from './dtos/update-subscription-type.dto';
 import {
-  CheckUnfollowInput,
-  CheckUnfollowOutput,
-} from './dtos/check-unfollow.dto';
-import {
   UpdateUserPointsAndStatisticsInput,
   UpdateUserPointsAndStatisticsOutput,
 } from './dtos/update-user-points-and-statistics.dto';
