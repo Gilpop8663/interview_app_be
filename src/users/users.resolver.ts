@@ -52,36 +52,23 @@ import {
   ResetPasswordInput,
   ResetPasswordOutput,
 } from './dtos/reset-password.dto';
-import { RefreshTokenInput } from './dtos/refresh-token.dto';
+import {
+  RefreshTokenInput,
+  RefreshTokenOutput,
+} from './dtos/refresh-token.dto';
 
 @Resolver()
 export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Mutation(() => CreateAccountOutput)
-  createAccount(
-    @Args('input') createAccountInput: CreateAccountInput,
-    @Context('res') res: Response,
-    @Context('req') req: Request,
-  ) {
-    const cookieDomain = getCookieDomain(req.headers.referer);
-
-    return this.usersService.createAccount(
-      createAccountInput,
-      res,
-      cookieDomain,
-    );
+  createAccount(@Args('input') createAccountInput: CreateAccountInput) {
+    return this.usersService.createAccount(createAccountInput);
   }
 
   @Mutation(() => LoginOutput)
-  login(
-    @Args('input') loginInput: LoginInput,
-    @Context('res') res: Response,
-    @Context('req') req: Request,
-  ) {
-    const cookieDomain = getCookieDomain(req.headers.referer);
-
-    return this.usersService.login(loginInput, res, cookieDomain);
+  login(@Args('input') loginInput: LoginInput) {
+    return this.usersService.login(loginInput);
   }
 
   @Query(() => User)
@@ -133,7 +120,8 @@ export class UsersResolver {
     @AuthUser() user: User,
     @Args('input') editProfileInput: EditProfileInput,
   ) {
-    return this.usersService.editProfile(user.id, editProfileInput);
+    console.log(user, '이이이');
+    return this.usersService.editProfile(1, editProfileInput);
   }
 
   @Mutation(() => DeleteAccountOutput)
@@ -147,20 +135,15 @@ export class UsersResolver {
     return this.usersService.deleteAccount(input, res, cookieDomain);
   }
 
-  @Mutation(() => LoginOutput)
-  refreshToken(
-    @Args('input') input: RefreshTokenInput,
-    @Context('res') res: Response,
-    @Context('req') req: Request,
-  ) {
+  @Mutation(() => RefreshTokenOutput)
+  refreshToken(@Args('input') input: RefreshTokenInput) {
     const refreshToken = input.refreshToken;
-    const cookieDomain = getCookieDomain(req.headers.referer);
 
     if (!refreshToken) {
       return { ok: false, error: '리프레시 토큰이 없습니다.' };
     }
 
-    return this.usersService.refreshToken(refreshToken, res, cookieDomain);
+    return this.usersService.refreshToken(refreshToken);
   }
 
   @Mutation(() => CoreOutput)

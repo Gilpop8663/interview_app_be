@@ -73,11 +73,11 @@ export class UsersService {
     private readonly mailService: MailService,
   ) {}
 
-  async createAccount(
-    { email, password, nickname }: CreateAccountInput,
-    @Res() res: Response,
-    cookieDomain: string,
-  ): Promise<{
+  async createAccount({
+    email,
+    password,
+    nickname,
+  }: CreateAccountInput): Promise<{
     ok: boolean;
     error?: string;
   }> {
@@ -111,11 +111,7 @@ export class UsersService {
 
       await this.users.save(newUser);
 
-      const result = await this.login(
-        { email, password, rememberMe: true },
-        res,
-        cookieDomain,
-      );
+      const result = await this.login({ email, password, rememberMe: true });
 
       return result;
     } catch (error) {
@@ -154,11 +150,7 @@ export class UsersService {
     }
   }
 
-  async login(
-    { email, password, rememberMe }: LoginInput,
-    @Res() res: Response,
-    cookieDomain: string,
-  ) {
+  async login({ email, password, rememberMe }: LoginInput) {
     try {
       const user = await this.users.findOne({
         where: { email },
@@ -183,7 +175,7 @@ export class UsersService {
       await this.updateLastActive(user.id);
       await this.rewardLoginPoints(user.id);
 
-      // 액세스 토큰 생성 (1시간 만료)
+      // // 액세스 토큰 생성 (1시간 만료)
       const accessToken = this.jwtService.sign(
         { id: user.id },
         { expiresIn: '1h' },
@@ -198,15 +190,6 @@ export class UsersService {
         { expiresIn: refreshTokenExpiry },
       );
 
-      // 리프레시 토큰을 쿠키에 저장
-      res.cookie('refreshToken', refreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: rememberMe ? 7 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000, // rememberMe에 따른 만료 시간 설정
-        domain: cookieDomain,
-      });
-
       return {
         ok: true,
         token: accessToken,
@@ -217,11 +200,7 @@ export class UsersService {
     }
   }
 
-  async refreshToken(
-    refreshToken: string,
-    @Res() res: Response,
-    cookieDomain: string,
-  ): Promise<RefreshTokenOutput> {
+  async refreshToken(refreshToken: string): Promise<RefreshTokenOutput> {
     try {
       const decoded = this.jwtService.verify(refreshToken);
       const result = await this.getUserProfile({ userId: decoded['id'] });
@@ -229,13 +208,6 @@ export class UsersService {
       if (!result.user) {
         const user_not_found = this.i18n.t('error.user_not_found', {
           lang: I18nContext.current().lang,
-        });
-
-        res.clearCookie('refreshToken', {
-          httpOnly: true,
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'none',
-          domain: cookieDomain,
         });
 
         return { ok: false, error: user_not_found };
@@ -258,14 +230,6 @@ export class UsersService {
         { expiresIn: refreshTokenExpiry },
       );
 
-      res.cookie('refreshToken', newRefreshToken, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none',
-        maxAge: rememberMe ? 7 * 24 * 60 * 60 * 1000 : 60 * 60 * 1000, // rememberMe에 따른 만료 시간 설정
-        domain: cookieDomain,
-      });
-
       return {
         ok: true,
         token: newAccessToken,
@@ -274,13 +238,6 @@ export class UsersService {
     } catch (error) {
       const invalid_refresh_token = this.i18n.t('error.invalid_refresh_token', {
         lang: I18nContext.current().lang,
-      });
-
-      res.clearCookie('refreshToken', {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'none',
-        domain: cookieDomain,
       });
 
       return { ok: false, error: invalid_refresh_token };

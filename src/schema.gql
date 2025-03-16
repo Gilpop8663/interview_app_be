@@ -401,7 +401,7 @@ type Mutation {
   login(input: LoginInput!): LoginOutput!
   logout: CoreOutput!
   processInterviewAudio(input: ProcessInterviewAudioInput!): ProcessInterviewAudioOutput!
-  refreshToken(input: RefreshTokenInput!): LoginOutput!
+  refreshToken(input: RefreshTokenInput!): RefreshTokenOutput!
   resetPassword(input: ResetPasswordInput!): ResetPasswordOutput!
   sendVerifyEmail(input: SendVerifyEmailInput!): SendVerifyEmailOutput!
   updateCoupon(input: UpdateCouponInput!): UpdateCouponOutput!
@@ -531,6 +531,13 @@ type Query {
 
 input RefreshTokenInput {
   refreshToken: String!
+}
+
+type RefreshTokenOutput {
+  error: String
+  ok: Boolean!
+  refreshToken: String
+  token: String
 }
 
 input ResetPasswordInput {
