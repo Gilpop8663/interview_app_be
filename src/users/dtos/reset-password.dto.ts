@@ -4,7 +4,7 @@ import { CoreOutput } from 'src/common/dtos/output.dto';
 @InputType()
 export class ResetPasswordInput {
   @Field(() => String)
-  newPassword: string;
+  password: string;
 
   @Field(() => String)
   code: string;

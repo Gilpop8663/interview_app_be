@@ -58,6 +58,7 @@ import {
   ForgotPasswordOutput,
 } from './dtos/forgot-password.dto';
 import { PasswordResetToken } from './entities/passwordResetToken.entity';
+import { RefreshTokenOutput } from './dtos/refresh-token.dto';
 
 @Injectable()
 export class UsersService {
@@ -209,6 +210,7 @@ export class UsersService {
       return {
         ok: true,
         token: accessToken,
+        refreshToken,
       };
     } catch (error) {
       return { ok: false, error: '로그인에 실패했습니다.' };
@@ -219,7 +221,7 @@ export class UsersService {
     refreshToken: string,
     @Res() res: Response,
     cookieDomain: string,
-  ) {
+  ): Promise<RefreshTokenOutput> {
     try {
       const decoded = this.jwtService.verify(refreshToken);
       const result = await this.getUserProfile({ userId: decoded['id'] });
@@ -267,6 +269,7 @@ export class UsersService {
       return {
         ok: true,
         token: newAccessToken,
+        refreshToken: newRefreshToken,
       };
     } catch (error) {
       const invalid_refresh_token = this.i18n.t('error.invalid_refresh_token', {
@@ -332,10 +335,33 @@ export class UsersService {
         where: { email },
       });
 
+      if (!verification) {
+        return { ok: false, error: '이메일 인증 정보가 없습니다.' };
+      }
+
+      const now = new Date();
+
+      if (verification.expiresAt < now) {
+        await this.verifications.delete(verification.id);
+        return { ok: false, error: '인증 코드가 만료되었습니다.' };
+      }
+
       if (verification.code === code) {
         await this.verifications.update(verification.id, { verified: true });
 
         return { ok: true };
+      }
+
+      await this.verifications.update(verification.id, {
+        attempts: verification.attempts + 1,
+      });
+
+      if (verification.attempts + 1 >= 3) {
+        await this.verifications.delete(verification.id);
+        return {
+          ok: false,
+          error: '인증 코드가 3회 틀려서 삭제되었습니다. 다시 요청해주세요.',
+        };
       }
 
       return { ok: false, error: '이메일 검증에 실패했습니다.' };
@@ -401,7 +427,7 @@ export class UsersService {
   }
 
   async resetPassword({
-    newPassword,
+    password,
     code,
   }: ResetPasswordInput): Promise<ResetPasswordOutput> {
     try {
@@ -416,7 +442,7 @@ export class UsersService {
 
       const user = token.user;
 
-      user.password = newPassword;
+      user.password = password;
 
       await this.users.save(user);
       await this.passwordResetToken.delete(token.id);

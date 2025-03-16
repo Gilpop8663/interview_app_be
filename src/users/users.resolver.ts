@@ -18,7 +18,6 @@ import {
 } from './dtos/delete-account.dto';
 
 import { Request, Response } from 'express';
-import { Cookies } from 'src/auth/cookie.decorator';
 import { CoreOutput } from 'src/common/dtos/output.dto';
 import { CheckEmailInput, CheckEmailOutput } from './dtos/check-email.dto';
 import { getCookieDomain } from './constant';
@@ -53,6 +52,7 @@ import {
   ResetPasswordInput,
   ResetPasswordOutput,
 } from './dtos/reset-password.dto';
+import { RefreshTokenInput } from './dtos/refresh-token.dto';
 
 @Resolver()
 export class UsersResolver {
@@ -149,11 +149,11 @@ export class UsersResolver {
 
   @Mutation(() => LoginOutput)
   refreshToken(
-    @Cookies() cookies: Record<string, string>,
+    @Args('input') input: RefreshTokenInput,
     @Context('res') res: Response,
     @Context('req') req: Request,
   ) {
-    const refreshToken = cookies.refreshToken;
+    const refreshToken = input.refreshToken;
     const cookieDomain = getCookieDomain(req.headers.referer);
 
     if (!refreshToken) {

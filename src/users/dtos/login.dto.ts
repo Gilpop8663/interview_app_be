@@ -14,4 +14,9 @@ export class LoginOutput extends CoreOutput {
     nullable: true,
   })
   token?: string;
+
+  @Field(() => String, {
+    nullable: true,
+  })
+  refreshToken?: string;
 }
