@@ -22,12 +22,15 @@ export class Verification extends CoreEntity {
   @Field(() => Number)
   attempts: number; // 인증 실패 횟수 저장
 
-  @Column({
-    type: 'timestamp',
-    default: () => "CURRENT_TIMESTAMP + INTERVAL '30 MINUTE'",
-  })
+  @Column()
   @Field(() => Date)
   expiresAt: Date;
+
+  @BeforeInsert()
+  setExpiryDate() {
+    const currentDate = new Date();
+    this.expiresAt = new Date(currentDate.getTime() + 1800 * 1000); // 30분 뒤 만료
+  }
 
   @BeforeInsert()
   createCode() {
