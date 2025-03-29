@@ -14,10 +14,4 @@ export class UploadSpeechFileOutput extends CoreOutput {
 
   @Field(() => String)
   answer: string;
-
-  @Field(() => String)
-  habits: string;
-
-  @Field(() => String)
-  speed: string;
 }

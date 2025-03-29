@@ -91,6 +91,7 @@ input CreateAccountInput {
 type CreateAccountOutput {
   error: String
   ok: Boolean!
+  refreshToken: String
   token: String
 }
 
@@ -491,9 +492,7 @@ input ProcessInterviewAudioInput {
 type ProcessInterviewAudioOutput {
   error: String
   feedback: String!
-  habits: String!
   ok: Boolean!
-  speed: String!
 }
 
 type Product {
@@ -645,9 +644,7 @@ type UploadSpeechFileOutput {
   answer: String!
   audioId: Float!
   error: String
-  habits: String!
   ok: Boolean!
-  speed: String!
 }
 
 input UseCouponInput {

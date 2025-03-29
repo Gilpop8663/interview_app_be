@@ -14,10 +14,4 @@ export class ProcessInterviewAudioInput {
 export class ProcessInterviewAudioOutput extends CoreOutput {
   @Field(() => String)
   feedback: string;
-
-  @Field(() => String)
-  habits: string;
-
-  @Field(() => String)
-  speed: string;
 }

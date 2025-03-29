@@ -1009,20 +1009,17 @@ export class InterviewsService {
     file,
     question,
   }: ProcessInterviewAudioInput): Promise<ProcessInterviewAudioOutput> {
-    const { answer, habits, speed } = await this.audioService.saveFile({
+    const { answer } = await this.audioService.saveFile({
       file,
     });
 
-    const { translatedText } =
-      await this.openAIService.correctSpeechTextGemini(answer);
     console.log('answer: ', answer);
-    console.log('변환된 것: ', translatedText);
 
     const { feedback } = await this.openAIService.generateInterviewFeedback({
       question,
-      userAnswer: translatedText,
+      userAnswer: answer,
     });
 
-    return { ok: true, feedback, habits, speed };
+    return { ok: true, feedback };
   }
 }

@@ -15,4 +15,9 @@ export class CreateAccountOutput extends CoreOutput {
     nullable: true,
   })
   token?: string;
+
+  @Field(() => String, {
+    nullable: true,
+  })
+  refreshToken?: string;
 }
