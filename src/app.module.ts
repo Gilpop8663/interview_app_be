@@ -119,11 +119,19 @@ const getEnvFilePath = () => {
       ],
       logging: process.env.NODE_ENV === 'dev',
       synchronize: true,
-      ssl: true,
+      ssl:
+        process.env.NODE_ENV === 'production'
+          ? {
+              // 다운로드한 인증서 파일 경로 추가
+              ca: fs.readFileSync('./global-bundle.pem'),
+            }
+          : false,
       extra: {
-        ssl: {
-          rejectUnauthorized: false,
-        },
+        // SSL 연결을 강제 설정
+        ssl:
+          process.env.NODE_ENV === 'production'
+            ? { rejectUnauthorized: false }
+            : false,
       },
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
