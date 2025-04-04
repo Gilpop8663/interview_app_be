@@ -38,6 +38,7 @@ import { CouponModule } from './coupon/coupon.module';
 import { Coupon } from './coupon/entities/coupon.entity';
 import { InterviewsModule } from './interviews/interviews.module';
 import { AudioModule } from './audio/audio.module';
+import * as fs from 'fs';
 import { Audio } from './audio/entities/audio.entity';
 import { PasswordResetToken } from './users/entities/passwordResetToken.entity';
 import { Verification } from './users/entities/verification.entity';
@@ -118,8 +119,11 @@ const getEnvFilePath = () => {
       ],
       logging: process.env.NODE_ENV === 'dev',
       synchronize: true,
-      ssl: {
-        rejectUnauthorized: false,
+      ssl: true,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        },
       },
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
