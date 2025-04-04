@@ -38,7 +38,6 @@ import { CouponModule } from './coupon/coupon.module';
 import { Coupon } from './coupon/entities/coupon.entity';
 import { InterviewsModule } from './interviews/interviews.module';
 import { AudioModule } from './audio/audio.module';
-import * as fs from 'fs';
 import { Audio } from './audio/entities/audio.entity';
 import { PasswordResetToken } from './users/entities/passwordResetToken.entity';
 import { Verification } from './users/entities/verification.entity';
@@ -119,19 +118,8 @@ const getEnvFilePath = () => {
       ],
       logging: process.env.NODE_ENV === 'dev',
       synchronize: true,
-      ssl:
-        process.env.NODE_ENV === 'production'
-          ? {
-              // 다운로드한 인증서 파일 경로 추가
-              ca: fs.readFileSync('./global-bundle.pem'),
-            }
-          : false,
-      extra: {
-        // SSL 연결을 강제 설정
-        ssl:
-          process.env.NODE_ENV === 'production'
-            ? { rejectUnauthorized: false }
-            : false,
+      ssl: {
+        rejectUnauthorized: false,
       },
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
