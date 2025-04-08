@@ -50,7 +50,7 @@ export class OpenAiService {
       }
 
       const model = this.genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash', // 사용하고자 하는 Gemini 모델을 명시
+        model: 'gemini-2.0-flash',
         generationConfig: { temperature: 0.7, maxOutputTokens: 2000 },
       });
 
@@ -139,7 +139,7 @@ export class OpenAiService {
 
       // Gemini 모델로 피드백을 생성
       const model = this.genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.0-flash',
         generationConfig: { temperature: 0.5, maxOutputTokens: 1500 },
       });
 
@@ -202,7 +202,7 @@ export class OpenAiService {
 
       // Gemini 모델로 피드백을 생성
       const model = this.genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.0-flash',
         generationConfig: { temperature: 0.5, maxOutputTokens: 1500 },
       });
 
@@ -264,7 +264,7 @@ export class OpenAiService {
   }: GenerateChatInput): Promise<GenerateChatOutput> {
     try {
       const model = this.genAI.getGenerativeModel({
-        model: 'gemini-1.5-flash',
+        model: 'gemini-2.0-flash',
         generationConfig: { temperature: 0.8, maxOutputTokens: 150 },
       });
 
